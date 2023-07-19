@@ -92,7 +92,7 @@ BOOL loadRoachClipLeft()
 			unsigned green = (bmpPixel & 0xFF00) >> 8;
 			unsigned blue = (bmpPixel & 0xFF0000) >> 16;
 			unsigned convertedPixel = (red << RShift) | (green << GShift) | (blue << BShift);
-			surfacePixel[x + y * bmpWidth] = convertedPixel;
+			surfacePixel[x + y * (ddsd.lPitch >> 2)] = convertedPixel;
 		}
 	}
 
@@ -102,7 +102,7 @@ BOOL loadRoachClipLeft()
 	DDCOLORKEY colorKey;
 	colorKey.dwColorSpaceLowValue = 0;
 	colorKey.dwColorSpaceHighValue = 0;
-	if (roachSurface->SetColorKey(DDCKEY_SRCBLT, &colorKey) != DD_OK || roachSurface->SetClipper(clipper) != DD_OK)
+	if (roachSurface->SetColorKey(DDCKEY_SRCBLT, &colorKey) != DD_OK)
 		return FALSE;
 
 	return TRUE;
@@ -144,7 +144,7 @@ BOOL loadRoachClipRight()
 	DDCOLORKEY colorKey;
 	colorKey.dwColorSpaceLowValue = 0;
 	colorKey.dwColorSpaceHighValue = 0;
-	if (roachSurfaceScaled->SetColorKey(DDCKEY_SRCBLT, &colorKey) != DD_OK /* || roachSurfaceScaled->SetClipper(clipper) != DD_OK */)
+	if (roachSurfaceScaled->SetColorKey(DDCKEY_SRCBLT, &colorKey) != DD_OK)
 		return FALSE;
 
 	DeleteObject(handle);
