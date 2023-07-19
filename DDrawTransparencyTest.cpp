@@ -5,6 +5,8 @@
 #include "DDrawTransparencyTest.h"
 #include "draw.h"
 #include "load.h"
+#include <WindowsX.h>
+#include <cstdio>
 
 #define MAX_LOADSTRING 100
 
@@ -170,6 +172,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_LBUTTONDOWN:
+        {
+            int xpos = GET_X_LPARAM(lParam);
+            int ypos = GET_Y_LPARAM(lParam);
+            HDC hdc = GetDC(hWnd);
+            if (hdc != NULL)
+            {
+                COLORREF pixColor = GetPixel(hdc, xpos, ypos);
+                ReleaseDC(hWnd, hdc);
+
+                char msg[50] = {};
+                std::snprintf(msg, sizeof msg, "You clicked on the color (%u, %u, %u)", GetRValue(pixColor), GetGValue(pixColor), GetBValue(pixColor));
+                MessageBoxA(NULL, msg, "Info", MB_OK | MB_ICONINFORMATION);
+            }
+            break;
+        }
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
