@@ -155,7 +155,7 @@ BOOL loadRoachClipRight()
 BOOL loadFrog1()
 {
 	// Using BitBlt
-	HANDLE handle = LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BIGCROAKER), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+	HANDLE handle = LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BIGCROAKER2), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	if (handle == NULL)
 		return FALSE;
 
@@ -188,8 +188,8 @@ BOOL loadFrog1()
 	DeleteDC(hdc);
 
 	DDCOLORKEY colorKey;
-	colorKey.dwColorSpaceLowValue = 0;
-	colorKey.dwColorSpaceHighValue = 0;
+	colorKey.dwColorSpaceLowValue = 0x01010101u; // Hopefully this should work regardless of color format
+	colorKey.dwColorSpaceHighValue = 0x01010101u;
 	if (frogSurface1->SetColorKey(DDCKEY_SRCBLT, &colorKey) != DD_OK)
 		return FALSE;
 

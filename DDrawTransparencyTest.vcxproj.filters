@@ -72,6 +72,9 @@
     <Image Include="roach_scaled.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="croaker2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="rcdata1.bin">

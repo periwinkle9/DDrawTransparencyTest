@@ -162,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="croaker.bmp" />
+    <Image Include="croaker2.bmp" />
     <Image Include="DDrawTransparencyTest.ico" />
     <Image Include="roach.bmp" />
     <Image Include="roach_scaled.bmp" />
