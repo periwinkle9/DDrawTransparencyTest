@@ -163,7 +163,12 @@ public:
 	{
 		RECT rcSet = {x, y, x + 72, y + 72};
 		RECT rcWork = rect[ani_no];
-		backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRC | DDBLT_WAIT, NULL);
+
+		// Let's try overriding the color key?
+		DDBLTFX bltfx;
+		memset(&bltfx, 0, sizeof bltfx); // Also sets color key to 0x00000000
+		bltfx.dwSize = sizeof bltfx;
+		backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRCOVERRIDE | DDBLT_WAIT, &bltfx);
 	}
 };
 
