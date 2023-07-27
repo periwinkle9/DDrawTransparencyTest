@@ -148,6 +148,7 @@
     <ClInclude Include="draw.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="load.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="targetver.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="DDrawTransparencyTest.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="load.cpp" />
+    <ClCompile Include="log.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawTransparencyTest.rc" />

@@ -1,5 +1,6 @@
 #include "draw.h"
 #include "DDrawTransparencyTest.h"
+#include "log.h"
 
 // For timeGetTime()
 #include <MMSystem.h>
@@ -17,11 +18,18 @@ RECT windowRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 BOOL initDDraw(HWND hWnd)
 {
 	// Set up DirectDraw like Doukutsu
+	HRESULT result;
 
-	if (DirectDrawCreate(NULL, &lpDD, NULL) != DD_OK)
+	if ((result = DirectDrawCreate(NULL, &lpDD, NULL)) != DD_OK)
+	{
+		reportFailure("DirectDrawCreate", __LINE__, result);
 		return FALSE;
-	if (lpDD->SetCooperativeLevel(hWnd, DDSCL_NORMAL) != DD_OK)
+	}
+	if ((result = lpDD->SetCooperativeLevel(hWnd, DDSCL_NORMAL)) != DD_OK)
+	{
+		reportFailure("lpDD->SetCooperativeLevel", __LINE__, result);
 		return FALSE;
+	}
 
 	DDSURFACEDESC ddsd;
 	memset(&ddsd, 0, sizeof ddsd);
@@ -29,8 +37,11 @@ BOOL initDDraw(HWND hWnd)
 	ddsd.dwFlags = DDSD_CAPS;
 	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-	if (lpDD->CreateSurface(&ddsd, &frontbuffer, NULL) != DD_OK)
+	if ((result = lpDD->CreateSurface(&ddsd, &frontbuffer, NULL)) != DD_OK)
+	{
+		reportFailure("lpDD->CreateSurface", __LINE__, result);
 		return FALSE;
+	}
 
 	memset(&ddsd, 0, sizeof ddsd);
 	ddsd.dwSize = sizeof ddsd;
@@ -39,15 +50,27 @@ BOOL initDDraw(HWND hWnd)
 	ddsd.dwWidth = WINDOW_WIDTH;
 	ddsd.dwHeight = WINDOW_HEIGHT;
 
-	if (lpDD->CreateSurface(&ddsd, &backbuffer, NULL) != DD_OK)
+	if ((result = lpDD->CreateSurface(&ddsd, &backbuffer, NULL)) != DD_OK)
+	{
+		reportFailure("lpDD->CreateSurface", __LINE__, result);
 		return FALSE;
+	}
 
-	if (lpDD->CreateClipper(0, &clipper, NULL) != DD_OK)
+	if ((result = lpDD->CreateClipper(0, &clipper, NULL)) != DD_OK)
+	{
+		reportFailure("lpDD->CreateClipper", __LINE__, result);
 		return FALSE;
-	if (clipper->SetHWnd(0, hWnd) != DD_OK)
+	}
+	if ((result = clipper->SetHWnd(0, hWnd)) != DD_OK)
+	{
+		reportFailure("clipper->SetHWnd", __LINE__, result);
 		return FALSE;
+	}
 	if (frontbuffer->SetClipper(clipper) != DD_OK)
+	{
+		reportFailure("frontbuffer->SetClipper", __LINE__, result);
 		return FALSE;
+	}
 
 	return TRUE;
 }
