@@ -257,7 +257,7 @@ BOOL loadFrog1()
 
 BOOL loadFrog2()
 {
-	// Using TransparentBlt
+	// BitBlt again but we override the color key later
 	HANDLE handle = LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BIGCROAKER), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	if (handle == NULL)
 	{
@@ -283,13 +283,6 @@ BOOL loadFrog2()
 		return FALSE;
 	}
 
-	// Black out the surface
-	DDBLTFX ddbltfx;
-	memset(&ddbltfx, 0, sizeof ddbltfx);
-	ddbltfx.dwSize = sizeof ddbltfx;
-	ddbltfx.dwFillColor = 0x000000;
-	frogSurface2->Blt(&windowRect, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
-
 	// Copy bitmap onto surface
 	HDC hdc = CreateCompatibleDC(NULL);
 	HGDIOBJ hgdiobj = SelectObject(hdc, handle);
@@ -300,9 +293,9 @@ BOOL loadFrog2()
 		return FALSE;
 	}
 
-	if (!TransparentBlt(hdc2, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, 0))
+	if (!BitBlt(hdc2, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdc, 0, 0, SRCCOPY))
 	{
-		reportFailure("TransparentBlt", __LINE__, 0);
+		reportFailure("BitBlt", __LINE__, 0);
 		return FALSE;
 	}
 	frogSurface2->ReleaseDC(hdc2);

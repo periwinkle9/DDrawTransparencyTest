@@ -186,12 +186,8 @@ public:
 	{
 		RECT rcSet = {x, y, x + 72, y + 72};
 		RECT rcWork = rect[ani_no];
-
-		// Let's try overriding the color key?
-		DDBLTFX bltfx;
-		memset(&bltfx, 0, sizeof bltfx); // Also sets color key to 0x00000000
-		bltfx.dwSize = sizeof bltfx;
-		backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRCOVERRIDE | DDBLT_WAIT, &bltfx);
+		
+		backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRC | DDBLT_WAIT, NULL);
 	}
 };
 
@@ -251,11 +247,20 @@ public:
 			}
 		}
 	}
-	void draw(int x, int y, LPDIRECTDRAWSURFACE surf) const
+	void draw(int x, int y, LPDIRECTDRAWSURFACE surf, bool overrideColorKey = false) const
 	{
 		RECT rcSet = {x, y, x + 96, y + 96};
 		RECT rcWork = facingRight ? rcRight[ani_no] : rcLeft[ani_no];
-		backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRC | DDBLT_WAIT, NULL);
+
+		if (overrideColorKey)
+		{
+			DDBLTFX bltfx;
+			memset(&bltfx, 0, sizeof bltfx); // Also sets color key to 0x00000000
+			bltfx.dwSize = sizeof bltfx;
+			backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRCOVERRIDE | DDBLT_WAIT, &bltfx);
+		}
+		else
+			backbuffer->Blt(&rcSet, surf, &rcWork, DDBLT_KEYSRC | DDBLT_WAIT, NULL);
 	}
 };
 
@@ -288,7 +293,7 @@ BOOL renderLoop(HINSTANCE hInstance, HWND hWnd)
 		leftFacingRoach.draw(204, 28, roachSurface);
 		// Draw BigCroakers
 		rightFacingFrog.draw(32, 128, frogSurface1);
-		leftFacingFrog.draw(192, 128, frogSurface2);
+		leftFacingFrog.draw(192, 128, frogSurface2, true);
 
 		if (!drawFrame(hInstance, hWnd))
 			return FALSE;
