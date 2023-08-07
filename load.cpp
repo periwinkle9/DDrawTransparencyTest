@@ -151,7 +151,7 @@ BOOL loadRoachClipRight()
 	DDSURFACEDESC ddsd;
 	memset(&ddsd, 0, sizeof ddsd);
 	ddsd.dwSize = sizeof ddsd;
-	ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+	ddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_CKSRCBLT; // Let's try setting DDSD_CKSRCBLT too
 	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 	ddsd.dwWidth = bitmap.bmWidth * 3;
 	ddsd.dwHeight = bitmap.bmHeight * 3;
@@ -241,9 +241,20 @@ BOOL loadFrog1()
 	SelectObject(hdc, hgdiobj);
 	DeleteDC(hdc);
 
+	// Get color for color key
+	memset(&ddsd, 0, sizeof ddsd);
+	ddsd.dwSize = sizeof ddsd;
+	if ((result = frogSurface1->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL)) != DD_OK)
+	{
+		reportFailure("frogSurface1->Lock", __LINE__, 0);
+		return FALSE;
+	}
+	DWORD bgColor = *reinterpret_cast<DWORD*>(ddsd.lpSurface);
+	frogSurface1->Unlock(NULL);
+
 	DDCOLORKEY colorKey;
-	colorKey.dwColorSpaceLowValue = 0x01010101u; // Hopefully this should work regardless of color format
-	colorKey.dwColorSpaceHighValue = 0x01010101u;
+	colorKey.dwColorSpaceLowValue = bgColor;
+	colorKey.dwColorSpaceHighValue = bgColor;
 	if ((result = frogSurface1->SetColorKey(DDCKEY_SRCBLT, &colorKey)) != DD_OK)
 	{
 		reportFailure("frogSurface1->SetColorKey", __LINE__, result);

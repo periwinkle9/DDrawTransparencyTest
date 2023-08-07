@@ -2,6 +2,7 @@
 
 #include "framework.h"
 #include <ddraw.h>
+#include <string>
 
 constexpr int WINDOW_WIDTH = 320;
 constexpr int WINDOW_HEIGHT = 240;
@@ -19,3 +20,4 @@ extern RECT windowRect;
 BOOL initDDraw(HWND hWnd);
 void releaseDDraw();
 BOOL renderLoop(HINSTANCE hInstance, HWND hWnd);
+std::string getSurfaceDescString(const DDSURFACEDESC&);

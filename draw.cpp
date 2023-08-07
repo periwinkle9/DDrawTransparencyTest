@@ -5,6 +5,8 @@
 // For timeGetTime()
 #include <MMSystem.h>
 
+#include <stdio.h>
+
 LPDIRECTDRAW lpDD;
 LPDIRECTDRAWSURFACE frontbuffer;
 LPDIRECTDRAWSURFACE backbuffer;
@@ -126,6 +128,59 @@ void restoreSurfaces()
 		frogSurface1->Restore();
 	if (frogSurface2 != NULL && frogSurface2->IsLost() == DDERR_SURFACELOST)
 		frogSurface2->Restore();
+}
+
+std::string getSurfaceDescString(const DDSURFACEDESC& surfaceDesc)
+{
+	std::string messageString;
+	auto write = [&messageString](const char* formatString, auto... args)
+	{
+		// I don't have C++20 std::format
+		char str[200] = {};
+		sprintf_s(str, sizeof str, formatString, args...);
+		messageString += str;
+	};
+
+	DWORD surfaceFlags = surfaceDesc.dwFlags;
+	write("flags: %X\n", surfaceFlags);
+
+	if (surfaceFlags & DDSD_WIDTH)
+		write("width: %u\n", surfaceDesc.dwWidth);
+	if (surfaceFlags & DDSD_HEIGHT)
+		write("height: %u\n", surfaceDesc.dwHeight);
+	if (surfaceFlags & DDSD_ALPHABITDEPTH)
+		write("alpha bit depth: %u\n", surfaceDesc.dwAlphaBitDepth);
+	if (surfaceFlags & DDSD_BACKBUFFERCOUNT)
+		write("backbuffer count: %u\n", surfaceDesc.dwBackBufferCount);
+	if (surfaceFlags & DDSD_CAPS)
+		write("capabilities: %X\n", surfaceDesc.ddsCaps.dwCaps);
+	if (surfaceFlags & DDSD_CKDESTBLT)
+		write("dest blt color key: %X %X\n", surfaceDesc.ddckCKDestBlt.dwColorSpaceLowValue, surfaceDesc.ddckCKDestBlt.dwColorSpaceHighValue);
+	if (surfaceFlags & DDSD_CKDESTOVERLAY)
+		write("dest overlay color key: %X %X\n", surfaceDesc.ddckCKDestOverlay.dwColorSpaceLowValue, surfaceDesc.ddckCKDestOverlay.dwColorSpaceHighValue);
+	if (surfaceFlags & DDSD_CKSRCBLT)
+		write("src blt color key: %X %X\n", surfaceDesc.ddckCKSrcBlt.dwColorSpaceLowValue, surfaceDesc.ddckCKSrcBlt.dwColorSpaceHighValue);
+	if (surfaceFlags & DDSD_CKSRCOVERLAY)
+		write("src overlay color key: %X %X\n", surfaceDesc.ddckCKSrcOverlay.dwColorSpaceLowValue, surfaceDesc.ddckCKSrcOverlay.dwColorSpaceHighValue);
+	if (surfaceFlags & DDSD_LINEARSIZE)
+		write("linear size: %u\n", surfaceDesc.dwLinearSize);
+	if (surfaceFlags & DDSD_MIPMAPCOUNT)
+		write("mipmap count: %u\n", surfaceDesc.dwMipMapCount);
+	if (surfaceFlags & DDSD_PITCH)
+		write("pitch: %ld\n", surfaceDesc.lPitch);
+	if (surfaceFlags & DDSD_REFRESHRATE)
+		write("refresh rate: %u\n", surfaceDesc.dwRefreshRate);
+	if (surfaceFlags & DDSD_ZBUFFERBITDEPTH)
+		write("z-buffer depth: %u\n", surfaceDesc.dwZBufferBitDepth);
+	if (surfaceFlags & DDSD_PIXELFORMAT)
+	{
+		const DDPIXELFORMAT& pixelFormat = surfaceDesc.ddpfPixelFormat;
+		write("pixel format:\n  flags: %X\n  RGB bit count: %u\n  Bit masks: %08X %08X %08X %08X",
+			pixelFormat.dwFlags, pixelFormat.dwRGBBitCount, pixelFormat.dwRBitMask,
+			pixelFormat.dwGBitMask, pixelFormat.dwBBitMask, pixelFormat.dwRGBAlphaBitMask);
+	}
+
+	return messageString;
 }
 
 BOOL drawFrame(HINSTANCE hInstance, HWND hWnd)

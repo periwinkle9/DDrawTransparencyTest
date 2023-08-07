@@ -47,6 +47,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (!initDDraw(hWindow) || !loadSprites())
         return FALSE;
     
+    MessageBox(hWindow, TEXT("Hi! If someone asked you to run this program, please screenshot the window "
+        "along with the contents of Help > Technical Info and send it to them.\nThanks in advance :D"),
+        TEXT("Hey!"), MB_OK);
+
     renderLoop(hInstance, hWindow);
     
     releaseDDraw();
@@ -164,6 +168,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
+            case ID_HELP_INFO:
+            {
+                DDSURFACEDESC frontBufferDesc, frogSurfaceDesc;
+                ZeroMemory(&frontBufferDesc, sizeof frontBufferDesc);
+                ZeroMemory(&frogSurfaceDesc, sizeof frogSurfaceDesc);
+                frontBufferDesc.dwSize = frogSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
+                frontbuffer->GetSurfaceDesc(&frontBufferDesc);
+                frogSurface2->GetSurfaceDesc(&frogSurfaceDesc);
+                std::string messageText = "Frontbuffer description:\n" + getSurfaceDescString(frontBufferDesc)
+                    + "\n\nFrog surface description:\n" + getSurfaceDescString(frogSurfaceDesc);
+                MessageBoxA(hWnd, messageText.c_str(), "Surface descriptions", MB_OK | MB_ICONINFORMATION);
+                break;
+            }
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
